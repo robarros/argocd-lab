@@ -2,11 +2,18 @@
 
 Este documento explica como configurar os secrets necessários para a pipeline CI/CD funcionar corretamente.
 
-## 🔐 Secrets Necessários
+## 🔐 Configurações Necessárias
 
-Você precisa configurar os seguintes secrets no seu repositório GitHub:
+### 1. Permissões do GitHub Actions
 
-### 1. Docker Hub Credentials
+⚠️ **IMPORTANTE**: Primeiro habilite as permissões do GitHub Actions:
+
+1. Acesse: `Settings` → `Actions` → `General`
+2. Em **Workflow permissions**, selecione: `Read and write permissions`
+3. Marque: `Allow GitHub Actions to create and approve pull requests`
+4. Clique em **Save**
+
+### 2. Secrets Necessários
 
 Acesse: `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
 

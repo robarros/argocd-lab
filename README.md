@@ -195,3 +195,4 @@ Este projeto usa o padrão **Apps of Apps** do ArgoCD:
 - Configure seu registry de imagens Docker
 - Adapte os recursos (CPU/memória) conforme necessário
 - Configure ingress controller se necessário
+# Pipeline corrigida
