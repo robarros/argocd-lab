@@ -19,14 +19,14 @@ spec:
   template:
     metadata:
       annotations:
-        deployment.kubernetes.io/revision: "20251023-230709"
+        deployment.kubernetes.io/revision: "20251023-232724"
       labels:
         app: hello-world-app
         version: v1
     spec:
       containers:
       - name: hello-world-app
-        image: robarros/argocd-app:4b7e368
+        image: robarros/argocd-app:afcb682
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
