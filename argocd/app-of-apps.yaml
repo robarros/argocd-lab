@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-username/argocd-lab.git  # Altere para seu repositório
+    repoURL: https://github.com/robarros/argocd-lab.git
     targetRevision: HEAD
     path: argocd/apps
   destination:
