@@ -68,15 +68,14 @@ robarros
    - Scanner Trivy para vulnerabilidades
    - Upload dos resultados para GitHub Security
 
-## 📊 Tags Criadas
+## 📊 Tag Criada
 
 Exemplo para commit `abc1234`:
 ```
 robarros/argocd-app:abc1234
-robarros/argocd-app:20241023-143022
-robarros/argocd-app:latest
-robarros/argocd-app:stable      # apenas main branch
 ```
+
+Apenas uma tag é criada por commit, baseada no SHA do commit para identificação única.
 
 ## 🔄 Fluxo ArgoCD
 

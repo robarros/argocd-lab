@@ -143,11 +143,8 @@ Pipeline completa com **GitHub Actions**:
 Commit → Build → Docker Push → K8s Update → ArgoCD Sync → Deploy
 ```
 
-**🏷️ Tags Criadas:**
-- `latest` - Última versão
-- `stable` - Branch main apenas  
-- `<commit-sha>` - Identificador único
-- `<timestamp>` - Momento do build
+**🏷️ Tag Criada:**
+- `<commit-sha>` - Identificador único do commit (ex: `abc1234`)
 
 **🛡️ Segurança:**
 - Scan de vulnerabilidades com Trivy

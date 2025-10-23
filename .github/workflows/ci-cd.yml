@@ -19,6 +19,8 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
     
     steps:
     - name: Checkout code
@@ -51,15 +53,8 @@ jobs:
         COMMIT_SHA=$(git rev-parse --short HEAD)
         TIMESTAMP=$(date +%Y%m%d-%H%M%S)
         
-        # Tags que serão criadas
+        # Apenas tag com commit SHA
         TAGS="${DOCKER_IMAGE}:${COMMIT_SHA}"
-        TAGS="${TAGS},${DOCKER_IMAGE}:${TIMESTAMP}"
-        TAGS="${TAGS},${DOCKER_IMAGE}:latest"
-        
-        # Se for branch main, adicionar tag stable
-        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          TAGS="${TAGS},${DOCKER_IMAGE}:stable"
-        fi
         
         echo "tags=${TAGS}" >> $GITHUB_OUTPUT
         echo "version=${COMMIT_SHA}" >> $GITHUB_OUTPUT
@@ -92,22 +87,13 @@ jobs:
         # Backup do arquivo original
         cp k8s/hello-world-app/deployment.yaml k8s/hello-world-app/deployment.yaml.bak
         
-        # Atualizar a imagem no deployment do Kubernetes (qualquer tag da imagem robarros/argocd-app)
+        # Atualizar a imagem no deployment do Kubernetes
         sed -i "s|image: robarros/argocd-app:.*|image: ${{ env.DOCKER_IMAGE }}:${{ steps.meta.outputs.version }}|g" k8s/hello-world-app/deployment.yaml
         
-        # Se não encontrou a imagem robarros/argocd-app, tentar hello-world-app (fallback)
-        sed -i "s|image: hello-world-app:.*|image: ${{ env.DOCKER_IMAGE }}:${{ steps.meta.outputs.version }}|g" k8s/hello-world-app/deployment.yaml
-        
-        # Adicionar annotation para forçar rollout
-        if ! grep -q "deployment.kubernetes.io/revision" k8s/hello-world-app/deployment.yaml; then
-          sed -i '/template:/,/metadata:/{
-            /metadata:/a\
-        annotations:\
-          deployment.kubernetes.io/revision: "'${{ steps.meta.outputs.timestamp }}'"
-          }' k8s/hello-world-app/deployment.yaml
-        else
-          sed -i "s|deployment.kubernetes.io/revision: \".*\"|deployment.kubernetes.io/revision: \"${{ steps.meta.outputs.timestamp }}\"|g" k8s/hello-world-app/deployment.yaml
-        fi
+        # Adicionar/atualizar annotation para forçar rollout de forma mais simples
+        # Apenas usar a mudança de imagem é suficiente para trigger do ArgoCD
+        # A annotation é opcional, remover para evitar problemas de sintaxe
+        echo "Imagem atualizada - ArgoCD detectará automaticamente pela mudança da imagem"
         
         # Mostrar as mudanças feitas
         echo "=== Mudanças no deployment ==="
@@ -145,9 +131,9 @@ jobs:
         echo "| **Timestamp** | \`${{ steps.meta.outputs.timestamp }}\` |" >> $GITHUB_STEP_SUMMARY
         echo "| **Branch** | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📦 Docker Tags Created:" >> $GITHUB_STEP_SUMMARY
+        echo "### 📦 Docker Tag Created:" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' >> $GITHUB_STEP_SUMMARY
+        echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 🎯 Next Steps:" >> $GITHUB_STEP_SUMMARY
@@ -164,7 +150,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: '${{ env.DOCKER_IMAGE }}:latest'
+        image-ref: '${{ needs.build-and-deploy.outputs.image-tag }}'
         format: 'sarif'
         output: 'trivy-results.sarif'
 
