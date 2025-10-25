@@ -18,8 +18,6 @@ spec:
       app: hello-world-app
   template:
     metadata:
-      annotations:
-        deployment.kubernetes.io/revision: "20251023-232724"
       labels:
         app: hello-world-app
         version: v1
