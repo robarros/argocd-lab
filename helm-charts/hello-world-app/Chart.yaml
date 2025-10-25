@@ -3,4 +3,4 @@ name: hello-world-app
 description: A Helm chart for Hello World Application
 type: application
 version: 0.1.0
-appVersion: "2edd1b4"
+appVersion: "50fc338"
