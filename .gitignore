@@ -121,3 +121,16 @@ Thumbs.db
 
 # Docker
 .dockerignore
+
+# Secrets e credenciais
+secrets.env
+secrets.yaml
+.secrets
+*.secret
+*secret*
+.github/secrets.env
+
+# Tokens e chaves
+*.pem
+*.key
+*.token
