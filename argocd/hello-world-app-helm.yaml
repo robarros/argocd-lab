@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/robarros/argocd-lab.git
-    targetRevision: HEAD
+    targetRevision: develop
     path: helm-charts/hello-world-app
     helm:
       releaseName: hello-world-app
