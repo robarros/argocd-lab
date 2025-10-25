@@ -8,6 +8,10 @@ on:
       - 'app/**'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+
 env:
   DOCKER_IMAGE: robarros/argocd-app
   DEPLOYMENT_FILE: k8s/hello-world-app/deployment.yaml
