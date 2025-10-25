@@ -10,13 +10,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar requirements primeiro (para cache de layers)
-COPY app/requirements.txt .
+COPY requirements.txt .
 
 # Instalar dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar código da aplicação
-COPY app/app.py .
+COPY app.py .
 
 # Criar usuário não-root
 RUN useradd --create-home --shell /bin/bash app && \

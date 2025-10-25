@@ -5,7 +5,120 @@ Este projeto demonstra uma aplicação Python simples ("Olá Mundo") com deploy 
 ## 📁 Estrutura do Projeto
 
 ```
-argocd-lab/
+# Laboratório de GitOps com Argo CD
+
+Este repositório contém um projeto de exemplo para demonstrar o uso do Argo CD com o padrão "App of Apps" para gerenciar múltiplas aplicações em um cluster Kubernetes.
+
+## Arquitetura
+
+A abordagem utilizada é o **GitOps**, onde o repositório Git é a única fonte da verdade para o estado desejado do nosso cluster. O Argo CD é a ferramenta que sincroniza esse estado.
+
+O projeto utiliza o padrão **App of Apps**:
+1.  Uma aplicação "raiz" (`app-of-apps`) é criada no Argo CD.
+2.  Esta aplicação raiz tem a responsabilidade de monitorar o diretório `argocd/` deste repositório.
+3.  Qualquer manifesto de `Application` do Argo CD adicionado ao diretório `argocd/` será automaticamente detectado e implantado pelo Argo CD, criando assim "aplicações filhas".
+
+## Estrutura de Diretórios
+
+```
+.
+├── Dockerfile              # Dockerfile para a aplicação Python de exemplo
+├── app/                    # Código-fonte da aplicação "hello-world"
+│   ├── app.py
+│   └── requirements.txt
+├── argocd/                 # Manifestos de Application do Argo CD (aplicações filhas)
+│   ├── hello-world-app.yaml
+│   └── nginx-app.yaml
+├── bootstrap/              # Aplicação raiz (App of Apps)
+│   └── app-of-apps.yaml
+├── k8s/                    # Manifestos Kubernetes para cada aplicação
+│   ├── hello-world-app/
+│   └── nginx/
+└── README.md
+```
+
+## Pré-requisitos
+
+-   Um cluster Kubernetes (ex: Minikube, Kind, Docker Desktop).
+-   `kubectl` instalado e configurado para acessar seu cluster.
+-   Argo CD instalado no cluster.
+
+## Como Iniciar
+
+### 1. Instalação do Argo CD
+
+Se você ainda não tem o Argo CD instalado, siga os passos abaixo.
+
+```bash
+# Cria o namespace para o Argo CD
+kubectl create namespace argocd
+
+# Aplica os manifestos de instalação do Argo CD
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+### 2. Deploy do App of Apps
+
+Para iniciar o processo de GitOps, aplique a aplicação raiz no seu cluster. Ela irá instruir o Argo CD a gerenciar as demais aplicações.
+
+```bash
+kubectl apply -f bootstrap/app-of-apps.yaml
+```
+
+Após aplicar este comando, o Argo CD irá:
+1.  Criar a aplicação `apps-of-apps`.
+2.  Sincronizar essa aplicação, que por sua vez lerá o diretório `argocd/`.
+3.  Criar as aplicações `hello-world-app` e `nginx`.
+4.  Sincronizar estas duas aplicações, fazendo o deploy dos seus respectivos recursos (Deployments, Services, etc.) no cluster.
+
+Você pode acompanhar o status pela UI do Argo CD ou via linha de comando.
+
+## Como Adicionar uma Nova Aplicação
+
+Para adicionar uma nova aplicação gerenciada por este fluxo de GitOps, siga os passos:
+
+1.  **Crie os manifestos Kubernetes:** Adicione os manifestos da sua nova aplicação em um novo subdiretório dentro de `k8s/`.
+    ```
+    k8s/
+    ├── ...
+    └── nova-app/
+        ├── deployment.yaml
+        └── service.yaml
+    ```
+
+2.  **Crie a Application do Argo CD:** Crie um novo arquivo YAML no diretório `argocd/` que defina a `Application` para o Argo CD. Use os arquivos existentes como modelo, ajustando o `metadata.name` e o `spec.source.path`.
+    ```yaml
+    # argocd/nova-app.yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: nova-app
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/robarros/argocd-lab.git # URL do seu repositório
+        targetRevision: HEAD
+        path: k8s/nova-app # Caminho para os manifestos da nova app
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: nova-app # Namespace onde a app será criada
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+    ```
+
+3.  **Commit e Push:** Adicione os novos arquivos ao Git e envie para o repositório.
+    ```bash
+    git add .
+    git commit -m "feat: Adiciona a nova-app"
+    git push
+    ```
+
+O Argo CD detectará automaticamente a nova `Application` no diretório `argocd/` e iniciará o deploy da sua nova aplicação.
 ├── app/                           # Código da aplicação
 │   ├── app.py                     # Aplicação Flask
 │   └── requirements.txt           # Dependências Python

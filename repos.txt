@@ -1,0 +1,9 @@
+https://github.com/Victorwasonga/End-to-End-GitOps-CI-CD-Pipeline-on-Kubernetes/blob/main/.github/workflows/argo-actions.yaml
+
+https://ferrishall.dev/gitops-with-github-actions-and-argo-cd
+
+https://medium.com/@mehmetkanus17/argocd-github-actions-a-complete-gitops-ci-cd-workflow-for-kubernetes-applications-ed2f91d37641
+
+https://jackjapar.com/kubernetes-deployments-argocd-and-github-actions-in-action
+
+https://dev.to/atsushii/kubernetes-cicd-with-gha-and-argocd-4ob4
