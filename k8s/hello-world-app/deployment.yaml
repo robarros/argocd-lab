@@ -7,7 +7,7 @@ metadata:
     app: hello-world-app
     version: v1
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -26,11 +26,7 @@ spec:
     spec:
       containers:
       - name: hello-world-app
-<<<<<<< HEAD
-        image: robarros/argocd-app:ea99bf4
-=======
-        image: robarros/argocd-app:ea99bf4
->>>>>>> 9648dd08d76a5a8d3cfd48a9845e4a9f5e2d4129
+        image: robarros/argocd-app
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -65,19 +61,4 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 3
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - name: tmp
-          mountPath: /tmp
-      volumes:
-      - name: tmp
-        emptyDir: {}
-      securityContext:
-        fsGroup: 1000
+
