@@ -1,0 +1,35 @@
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: k3d-cluster
+
+servers: 1
+
+agents: 1  
+
+image: rancher/k3s:v1.34.1-k3s1
+
+options:
+  k3d: 
+    wait: true  
+    timeout: "60s" 
+    disableLoadbalancer: true 
+
+  k3s:
+    extraArgs:
+      - arg: "--disable=traefik"
+        nodeFilters:
+          - server:*
+
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
+
+# k3d cluster create --config cluster-k3d.yaml
+
+# k3d cluster start k3d-cluster
+
+# k3d cluster stop k3d-cluster
+
+# k3d cluster delete k3d-cluster
