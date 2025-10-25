@@ -12,10 +12,9 @@ spec:
   source:
     repoURL: https://github.com/robarros/argocd-lab.git
     targetRevision: HEAD
-    path: argocd/apps
+    path: argocd
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
   syncPolicy:
     automated:
       prune: true
