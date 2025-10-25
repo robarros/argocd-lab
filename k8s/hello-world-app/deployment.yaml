@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: hello-world-app
-          image: robarros/argocd-app:5995c48
+          image: robarros/argocd-app:35b9931
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
