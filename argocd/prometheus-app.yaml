@@ -25,7 +25,7 @@ spec:
         server:
           service: 
             type: LoadBalancer
-            servicePort: 8080
+            servicePort: 9999
           global:
             scrape_interval: 15s
           persistentVolume:
