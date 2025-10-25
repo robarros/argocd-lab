@@ -101,23 +101,25 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+      
       - name: Update Helm Chart appVersion
-        uses: mikefarah/yq@v4.48.1
-        with:
-          cmd: |
-            yq eval '.appVersion = "${{ needs.build.outputs.short_sha }}"' -i ${{ env.HELM_CHART_FILE }}
-            echo "🔄 Updated appVersion to: ${{ needs.build.outputs.short_sha }}"
-            echo "📄 Chart.yaml appVersion:"
-            yq eval '.appVersion' ${{ env.HELM_CHART_FILE }}
+        run: |
+          echo "🔄 Updating appVersion to: ${{ needs.build.outputs.short_sha }}"
+          yq eval '.appVersion = "${{ needs.build.outputs.short_sha }}"' -i ${{ env.HELM_CHART_FILE }}
+          echo "📄 Chart.yaml appVersion:"
+          yq eval '.appVersion' ${{ env.HELM_CHART_FILE }}
       
       - name: Update Helm values image tag
-        uses: mikefarah/yq@v4.48.1
-        with:
-          cmd: |
-            yq eval '.image.tag = "${{ needs.build.outputs.short_sha }}"' -i ${{ env.HELM_VALUES_FILE }}
-            echo "🔄 Updated image tag to: ${{ needs.build.outputs.short_sha }}"
-            echo "📄 Values.yaml image tag:"
-            yq eval '.image.tag' ${{ env.HELM_VALUES_FILE }}
+        run: |
+          echo "🔄 Updating image tag to: ${{ needs.build.outputs.short_sha }}"
+          yq eval '.image.tag = "${{ needs.build.outputs.short_sha }}"' -i ${{ env.HELM_VALUES_FILE }}
+          echo "📄 Values.yaml image tag:"
+          yq eval '.image.tag' ${{ env.HELM_VALUES_FILE }}
       
       - name: Verify changes
         run: |
