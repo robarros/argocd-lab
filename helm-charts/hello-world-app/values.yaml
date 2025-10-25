@@ -2,7 +2,7 @@ replicaCount: 3
 
 image:
   repository: robarros/argocd-app
-  tag: "337bbf3"
+  tag: "224a535"
   pullPolicy: Always
 
 nameOverride: ""
