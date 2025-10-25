@@ -23,8 +23,9 @@ spec:
         kube-state-metrics:
           enabled: false
         server:
-          service:
+          service: 
             type: LoadBalancer
+            servicePort: 8080
           global:
             scrape_interval: 15s
           persistentVolume:
