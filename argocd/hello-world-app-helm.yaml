@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
   labels:
     app.kubernetes.io/name: hello-world-app-helm
+  annotations:
+    argocd.argoproj.io/refresh: hard
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -17,6 +19,7 @@ spec:
       releaseName: hello-world-app
       valueFiles:
         - values.yaml
+      skipCrds: false
   destination:
     server: https://kubernetes.default.svc
     namespace: hello-world
@@ -29,12 +32,15 @@ spec:
       - CreateNamespace=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
+      - Replace=true
+      - Force=true
     retry:
       limit: 5
       backoff:
         duration: 5s
         factor: 2
         maxDuration: 3m
+  revisionHistoryLimit: 10
   ignoreDifferences:
   - group: apps
     kind: Deployment
