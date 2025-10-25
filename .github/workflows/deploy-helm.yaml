@@ -7,7 +7,6 @@ on:
       - develop
     paths:
       - 'app/**'
-      - 'helm-charts/hello-world-app/**'
   workflow_dispatch:
 
 permissions:
